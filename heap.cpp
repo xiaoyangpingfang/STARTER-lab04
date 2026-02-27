@@ -1,36 +1,56 @@
 // heap.cpp
 // Diba Mirza
-
 #include "heap.h"
 #include <iostream>
 using std::cout;
 
-// Builds a heap from the range [start, end) using the heapify algorithm
-// Should run in O(n) time
-Heap::Heap(std::vector<int>::iterator start, std::vector<int>::iterator end){
-
+void Heap::bubbleDown(int i) {
+    int n = vdata.size();
+    while (true) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int smallest = i;
+        if (left < n && vdata[left] < vdata[smallest]) smallest = left;
+        if (right < n && vdata[right] < vdata[smallest]) smallest = right;
+        if (smallest == i) break;
+        std::swap(vdata[i], vdata[smallest]);
+        i = smallest;
+    }
 }
 
-// Pushes a value into the heap, then ensures
-// the heap is correctly arranged
-void Heap::push(int value){
-
+void Heap::bubbleUp(int i) {
+    while (i > 0) {
+        int parent = (i - 1) / 2;
+        if (vdata[i] < vdata[parent]) {
+            std::swap(vdata[i], vdata[parent]);
+            i = parent;
+        } else break;
+    }
 }
 
-// Pops the minimum value off the heap
-// (but does not return it), then ensures
-// the heap is correctly arranged
-void Heap::pop(){
-
+Heap::Heap(std::vector<int>::iterator start, std::vector<int>::iterator end) {
+    vdata.assign(start, end);
+    for (int i = (int)vdata.size() / 2 - 1; i >= 0; i--) {
+        bubbleDown(i);
+    }
 }
 
-// Returns the minimum element in the heap
-int Heap::top(){
-  return 0;
+void Heap::push(int value) {
+    vdata.push_back(value);
+    bubbleUp((int)vdata.size() - 1);
 }
 
-// Returns true if the heap is empty, false otherwise
-bool Heap::empty(){
-  return true;
+void Heap::pop() {
+    if (vdata.empty()) return;
+    vdata[0] = vdata.back();
+    vdata.pop_back();
+    if (!vdata.empty()) bubbleDown(0);
 }
-    
+
+int Heap::top() {
+    return vdata[0];
+}
+
+bool Heap::empty() {
+    return vdata.empty();
+}
